@@ -43,10 +43,17 @@ export default function DeleteGoalButton({ goalId }: DeleteGoalButtonProps) {
   return (
     <button
       onClick={handleDelete}
-      className="btn btn-error"
+      className="btn btn-error btn-sm md:btn-md"
       disabled={isDeleting}
     >
-      {isDeleting ? "削除中..." : "目標を削除"}
+      {isDeleting ? (
+        <>
+          <span className="loading loading-spinner loading-xs"></span>
+          削除中...
+        </>
+      ) : (
+        "目標を削除"
+      )}
     </button>
   );
 }

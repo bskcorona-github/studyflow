@@ -22,27 +22,27 @@ export default async function Home() {
             <div className="sm:text-center lg:text-left">
               <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
                 <span className="block">AI学習計画で</span>
-                <span className="block text-indigo-600">効率的に目標達成</span>
+                <span className="block text-primary-600">効率的に目標達成</span>
               </h1>
-              <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
+              <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
                 AIが学習目標に合わせて最適な学習計画を自動生成します。
                 進捗に応じてスケジュールを自動調整し、効率的な学習をサポートします。
               </p>
               <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                 {user ? (
-                  <div className="rounded-md shadow">
+                  <div className="rounded-lg shadow">
                     <Link
                       href="/dashboard"
-                      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10"
+                      className="btn btn-primary btn-lg w-full"
                     >
                       ダッシュボードへ
                     </Link>
                   </div>
                 ) : (
-                  <div className="rounded-md shadow">
+                  <div className="rounded-lg shadow">
                     <Link
                       href="/api/auth/signin"
-                      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10"
+                      className="btn btn-primary btn-lg w-full"
                     >
                       始めましょう
                     </Link>
@@ -51,7 +51,7 @@ export default async function Home() {
                 <div className="mt-3 sm:mt-0 sm:ml-3">
                   <a
                     href="#features"
-                    className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 md:py-4 md:text-lg md:px-10"
+                    className="btn btn-outline btn-lg w-full"
                   >
                     詳細を見る
                   </a>
@@ -63,37 +63,37 @@ export default async function Home() {
       </div>
       <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
         <img
-          className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full"
+          className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full rounded-lg lg:rounded-l-lg lg:rounded-r-none shadow-md"
           src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2850&q=80"
           alt="学習イメージ"
         />
       </div>
 
-      <div className="py-12 bg-white" id="features">
+      <div className="py-16 bg-white" id="features">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
-            <h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
+            <h2 className="text-base text-primary-600 font-semibold tracking-wide uppercase">
               StudyFlow 特徴
             </h2>
             <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
               AI搭載の学習管理システム
             </p>
-            <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+            <p className="mt-4 max-w-2xl text-xl text-gray-600 lg:mx-auto">
               あなたの目標と生活リズムに合わせた最適な学習計画を自動で作成します。
             </p>
           </div>
 
-          <div className="mt-10">
-            <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
-              <div className="relative">
+          <div className="mt-12">
+            <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-12">
+              <div className="relative p-6 rounded-lg bg-white shadow-sm hover:shadow-md transition-all">
                 <dt>
-                  <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                  <div className="absolute flex items-center justify-center h-14 w-14 rounded-full bg-primary-500 text-white">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
-                      className="h-6 w-6"
+                      className="h-7 w-7"
                     >
                       <path
                         strokeLinecap="round"
@@ -103,24 +103,24 @@ export default async function Home() {
                       />
                     </svg>
                   </div>
-                  <p className="ml-16 text-lg leading-6 font-medium text-gray-900">
+                  <p className="ml-20 text-xl leading-6 font-medium text-gray-900">
                     AI学習計画の自動生成
                   </p>
                 </dt>
-                <dd className="mt-2 ml-16 text-base text-gray-500">
+                <dd className="mt-2 ml-20 text-base text-gray-600">
                   あなたの目標、期限、学習可能日数からAIが最適な学習計画を作成します。学習内容を適切に分割し、無理のないペースで目標達成へ導きます。
                 </dd>
               </div>
 
-              <div className="relative">
+              <div className="relative p-6 rounded-lg bg-white shadow-sm hover:shadow-md transition-all">
                 <dt>
-                  <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                  <div className="absolute flex items-center justify-center h-14 w-14 rounded-full bg-primary-500 text-white">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
-                      className="h-6 w-6"
+                      className="h-7 w-7"
                     >
                       <path
                         strokeLinecap="round"
@@ -130,24 +130,24 @@ export default async function Home() {
                       />
                     </svg>
                   </div>
-                  <p className="ml-16 text-lg leading-6 font-medium text-gray-900">
+                  <p className="ml-20 text-xl leading-6 font-medium text-gray-900">
                     自動リバランス機能
                   </p>
                 </dt>
-                <dd className="mt-2 ml-16 text-base text-gray-500">
+                <dd className="mt-2 ml-20 text-base text-gray-600">
                   学習進捗の遅れや早さに応じて、残りの学習計画を自動的に調整。遅れを取り戻すための計画変更も自動で行います。
                 </dd>
               </div>
 
-              <div className="relative">
+              <div className="relative p-6 rounded-lg bg-white shadow-sm hover:shadow-md transition-all">
                 <dt>
-                  <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                  <div className="absolute flex items-center justify-center h-14 w-14 rounded-full bg-primary-500 text-white">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
-                      className="h-6 w-6"
+                      className="h-7 w-7"
                     >
                       <path
                         strokeLinecap="round"
@@ -157,24 +157,24 @@ export default async function Home() {
                       />
                     </svg>
                   </div>
-                  <p className="ml-16 text-lg leading-6 font-medium text-gray-900">
+                  <p className="ml-20 text-xl leading-6 font-medium text-gray-900">
                     進捗の可視化
                   </p>
                 </dt>
-                <dd className="mt-2 ml-16 text-base text-gray-500">
+                <dd className="mt-2 ml-20 text-base text-gray-600">
                   学習の進捗状況をグラフやチャートで視覚的に確認。目標達成までの道のりを明確に把握できます。
                 </dd>
               </div>
 
-              <div className="relative">
+              <div className="relative p-6 rounded-lg bg-white shadow-sm hover:shadow-md transition-all">
                 <dt>
-                  <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                  <div className="absolute flex items-center justify-center h-14 w-14 rounded-full bg-primary-500 text-white">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
-                      className="h-6 w-6"
+                      className="h-7 w-7"
                     >
                       <path
                         strokeLinecap="round"
@@ -184,11 +184,11 @@ export default async function Home() {
                       />
                     </svg>
                   </div>
-                  <p className="ml-16 text-lg leading-6 font-medium text-gray-900">
+                  <p className="ml-20 text-xl leading-6 font-medium text-gray-900">
                     「今日やること」の明確化
                   </p>
                 </dt>
-                <dd className="mt-2 ml-16 text-base text-gray-500">
+                <dd className="mt-2 ml-20 text-base text-gray-600">
                   複雑な学習計画も、今日すべきことだけを明確に表示。迷いなく学習に取り組めます。
                 </dd>
               </div>

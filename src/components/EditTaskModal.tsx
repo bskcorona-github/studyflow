@@ -74,14 +74,14 @@ export default function EditTaskModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-semibold mb-4">タスクを編集</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 backdrop-blur-sm">
+      <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800">タスクを編集</h2>
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="title" className="block text-sm font-medium mb-1">
-              タイトル<span className="text-red-500">*</span>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+              タイトル<span className="text-red-500 ml-1">*</span>
             </label>
             <input
               type="text"
@@ -94,10 +94,10 @@ export default function EditTaskModal({
             />
           </div>
 
-          <div className="mb-4">
+          <div>
             <label
               htmlFor="description"
-              className="block text-sm font-medium mb-1"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
               説明
             </label>
@@ -105,32 +105,42 @@ export default function EditTaskModal({
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="textarea textarea-bordered w-full h-32"
+              className="textarea textarea-bordered w-full min-h-[120px]"
               placeholder="タスクの詳細を入力（任意）"
             />
           </div>
 
           {error && (
-            <div className="alert alert-error mb-4">
+            <div className="alert alert-error">
+              <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
               <span>{error}</span>
             </div>
           )}
 
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="btn btn-ghost"
+              className="btn btn-outline"
               disabled={isSubmitting}
             >
               キャンセル
             </button>
             <button
               type="submit"
-              className="btn btn-primary"
+              className="btn btn-primary min-w-[120px]"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "更新中..." : "更新する"}
+              {isSubmitting ? (
+                <>
+                  <span className="loading loading-spinner loading-xs"></span>
+                  更新中...
+                </>
+              ) : (
+                "更新する"
+              )}
             </button>
           </div>
         </form>

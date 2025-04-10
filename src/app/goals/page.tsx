@@ -33,18 +33,24 @@ export default async function Goals() {
   today.setHours(0, 0, 0, 0);
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">学習目標</h1>
+    <div className="space-y-8 max-w-6xl mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-3xl font-bold text-gray-800">学習目標</h1>
         <Link href="/goals/new" className="btn btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 3a1 1 0 00-1 1v5H4a1 1 0 100 2h5v5a1 1 0 102 0v-5h5a1 1 0 100-2h-5V4a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
           新しい目標を追加
         </Link>
       </div>
 
       {goals.length === 0 ? (
-        <div className="text-center py-12">
-          <h2 className="text-2xl font-bold mb-4">まだ学習目標がありません</h2>
-          <p className="mb-8">
+        <div className="text-center py-16 bg-white rounded-xl shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-300 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          <h2 className="text-2xl font-bold mb-4 text-gray-800">まだ学習目標がありません</h2>
+          <p className="mb-8 text-gray-600 max-w-md mx-auto">
             新しい学習目標を設定して、AIに学習計画を立ててもらいましょう！
           </p>
           <Link href="/goals/new" className="btn btn-primary btn-lg">
@@ -81,64 +87,64 @@ export default async function Goals() {
             });
 
             return (
-              <div key={goal.id} className="card bg-base-100 shadow-xl">
-                <div className="card-body">
+              <div key={goal.id} className="card bg-white shadow-md rounded-xl hover:shadow-lg transition-shadow">
+                <div className="card-body p-6">
                   <div className="flex justify-between items-start">
-                    <h2 className="card-title">{goal.title}</h2>
+                    <h2 className="card-title text-xl text-gray-800">{goal.title}</h2>
                     <span className="badge badge-primary">{goal.field}</span>
                   </div>
 
-                  <p className="mb-2">{goal.goal}</p>
+                  <p className="mt-2 mb-4 text-gray-600">{goal.goal}</p>
 
-                  <div className="mb-4">
-                    <div className="flex justify-between mb-1">
-                      <span>進捗状況</span>
-                      <span>{progressPercentage}%</span>
+                  <div className="mb-5">
+                    <div className="flex justify-between mb-2">
+                      <span className="font-medium text-gray-700">進捗状況</span>
+                      <span className="font-medium text-primary">{progressPercentage}%</span>
                     </div>
                     <progress
-                      className="progress progress-primary w-full"
+                      className="progress progress-primary w-full h-3"
                       value={progressPercentage}
                       max="100"
                     ></progress>
                   </div>
 
-                  <div className="stats stats-vertical lg:stats-horizontal shadow mb-4">
+                  <div className="stats stats-vertical lg:stats-horizontal bg-gray-50 shadow-sm rounded-lg mb-5">
                     <div className="stat">
-                      <div className="stat-title">残り日数</div>
-                      <div className="stat-value text-primary">
+                      <div className="stat-title text-gray-600">残り日数</div>
+                      <div className="stat-value text-primary text-2xl">
                         {daysRemaining}
                       </div>
-                      <div className="stat-desc">
+                      <div className="stat-desc text-gray-500">
                         {new Date(goal.deadline).toLocaleDateString("ja-JP")}
                         まで
                       </div>
                     </div>
 
                     <div className="stat">
-                      <div className="stat-title">完了日数</div>
-                      <div className="stat-value">
+                      <div className="stat-title text-gray-600">完了日数</div>
+                      <div className="stat-value text-2xl">
                         {completedSchedules}/{totalSchedules}
                       </div>
-                      <div className="stat-desc">計画された日数</div>
+                      <div className="stat-desc text-gray-500">計画された日数</div>
                     </div>
                   </div>
 
                   {todaySchedule && (
-                    <div className="mb-4">
-                      <h3 className="font-medium mb-2">今日のタスク</h3>
-                      <div className="bg-base-200 p-3 rounded-lg">
-                        <div className="flex justify-between mb-1">
-                          <span>進捗</span>
-                          <span>
+                    <div className="mb-5">
+                      <h3 className="font-medium text-gray-700 mb-2">今日のタスク</h3>
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <div className="flex justify-between mb-2">
+                          <span className="text-gray-600">進捗</span>
+                          <span className="font-medium">
                             {Math.round(todaySchedule.progress * 100)}%
                           </span>
                         </div>
                         <progress
-                          className="progress progress-accent w-full mb-2"
+                          className="progress progress-accent w-full h-2 mb-3"
                           value={todaySchedule.progress * 100}
                           max="100"
                         ></progress>
-                        <div className="text-sm">
+                        <div className="text-sm text-gray-600">
                           {
                             todaySchedule.studyTasks.filter((t) => t.isComplete)
                               .length
@@ -149,7 +155,7 @@ export default async function Goals() {
                     </div>
                   )}
 
-                  <div className="card-actions justify-end">
+                  <div className="card-actions justify-end mt-2">
                     <Link
                       href={`/goals/${goal.id}`}
                       className="btn btn-primary btn-sm"

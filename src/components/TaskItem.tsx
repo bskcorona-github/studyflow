@@ -93,41 +93,46 @@ export default function TaskItem({ task }: TaskItemProps) {
   return (
     <>
       <div
-        className={`p-4 rounded-lg border ${
+        className={`p-5 rounded-lg border transition-all hover:shadow-sm ${
           isComplete
-            ? "bg-base-200 border-base-300"
-            : "bg-base-100 border-base-200"
+            ? "bg-gray-50 border-gray-200"
+            : "bg-white border-gray-200"
         }`}
       >
-        <div className="flex items-start gap-3">
-          <input
-            type="checkbox"
-            checked={isComplete}
-            onChange={handleToggleComplete}
-            disabled={isSubmitting}
-            className="checkbox checkbox-primary mt-1"
-          />
+        <div className="flex items-start gap-4">
+          <div className="flex-shrink-0">
+            <label className="cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isComplete}
+                onChange={handleToggleComplete}
+                disabled={isSubmitting}
+                className="checkbox checkbox-primary w-6 h-6"
+              />
+              <span className="sr-only">タスク完了</span>
+            </label>
+          </div>
           <div className="flex-grow">
             <h3
-              className={`font-medium ${
-                isComplete ? "line-through opacity-70" : ""
+              className={`text-lg font-medium ${
+                isComplete ? "line-through text-gray-500" : "text-gray-800"
               }`}
             >
               {task.title}
             </h3>
-            <div className="flex flex-wrap gap-2 mt-1">
-              <span className="badge badge-primary badge-sm">
+            <div className="flex flex-wrap gap-2 mt-2">
+              <span className="badge badge-primary">
                 {task.studyGoal.field}
               </span>
-              <span className="badge badge-outline badge-sm">
+              <span className="badge badge-outline">
                 {task.studyGoal.title}
               </span>
-              <span className="badge badge-ghost badge-sm">
+              <span className="badge badge-ghost">
                 {formatDate(task.schedule.date)}
               </span>
             </div>
             {task.description && (
-              <p className={`mt-2 text-sm ${isComplete ? "opacity-50" : ""}`}>
+              <p className={`mt-3 text-sm text-gray-600 ${isComplete ? "opacity-60" : ""}`}>
                 {task.description}
               </p>
             )}
@@ -136,14 +141,14 @@ export default function TaskItem({ task }: TaskItemProps) {
           <div className="flex flex-col gap-2">
             <button
               onClick={() => setIsEditModalOpen(true)}
-              className="btn btn-ghost btn-xs"
+              className="btn btn-ghost btn-sm"
               disabled={isDeleting}
             >
               編集
             </button>
             <button
               onClick={handleDelete}
-              className="btn btn-ghost btn-xs text-error"
+              className="btn btn-ghost btn-sm text-error"
               disabled={isDeleting}
             >
               {isDeleting ? "削除中..." : "削除"}

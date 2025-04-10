@@ -87,20 +87,20 @@ export default async function Dashboard() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="layout-container py-8">
-        <header className="mb-8">
+      <div className="layout-container py-10">
+        <header className="mb-10">
           <h1 className="text-3xl font-bold text-gray-900">ダッシュボード</h1>
-          <p className="mt-2 text-gray-500">
+          <p className="mt-2 text-gray-600">
             学習の進捗状況と今日のタスクを確認できます
           </p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="card p-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <div className="card p-6 hover:shadow-md transition-all">
             <div className="flex items-start">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center">
+              <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary-100 flex items-center justify-center">
                 <svg
-                  className="w-6 h-6 text-primary-600"
+                  className="w-7 h-7 text-primary-600"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -114,7 +114,7 @@ export default async function Dashboard() {
                   />
                 </svg>
               </div>
-              <div className="ml-4">
+              <div className="ml-5">
                 <h2 className="text-lg font-semibold text-gray-900">
                   学習目標
                 </h2>
@@ -131,11 +131,11 @@ export default async function Dashboard() {
             </div>
           </div>
 
-          <div className="card p-6">
+          <div className="card p-6 hover:shadow-md transition-all">
             <div className="flex items-start">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-accent-light bg-opacity-20 flex items-center justify-center">
+              <div className="flex-shrink-0 w-14 h-14 rounded-full bg-accent-light bg-opacity-20 flex items-center justify-center">
                 <svg
-                  className="w-6 h-6 text-accent"
+                  className="w-7 h-7 text-accent"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -149,7 +149,7 @@ export default async function Dashboard() {
                   />
                 </svg>
               </div>
-              <div className="ml-4">
+              <div className="ml-5">
                 <h2 className="text-lg font-semibold text-gray-900">
                   今日のタスク
                 </h2>
@@ -166,11 +166,11 @@ export default async function Dashboard() {
             </div>
           </div>
 
-          <div className="card p-6">
+          <div className="card p-6 hover:shadow-md transition-all">
             <div className="flex items-start">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-success bg-opacity-20 flex items-center justify-center">
+              <div className="flex-shrink-0 w-14 h-14 rounded-full bg-success bg-opacity-20 flex items-center justify-center">
                 <svg
-                  className="w-6 h-6 text-success"
+                  className="w-7 h-7 text-success"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -184,7 +184,7 @@ export default async function Dashboard() {
                   />
                 </svg>
               </div>
-              <div className="ml-4">
+              <div className="ml-5">
                 <h2 className="text-lg font-semibold text-gray-900">
                   完了タスク
                 </h2>
@@ -192,7 +192,7 @@ export default async function Dashboard() {
                   {todayTasks.filter((task) => task.isComplete).length} /{" "}
                   {todayTasks.length}
                 </p>
-                <p className="text-sm text-gray-500 mt-2">
+                <p className="text-sm text-gray-600 mt-2">
                   {Math.round(
                     (todayTasks.filter((task) => task.isComplete).length /
                       Math.max(todayTasks.length, 1)) *
@@ -205,8 +205,8 @@ export default async function Dashboard() {
           </div>
         </div>
 
-        <section className="mb-8">
-          <div className="flex justify-between items-center mb-4">
+        <section className="mb-10">
+          <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-900">学習目標</h2>
             <Link href="/goals/new" className="btn btn-primary btn-sm">
               新しい目標を追加
@@ -216,7 +216,7 @@ export default async function Dashboard() {
         </section>
 
         <section>
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-900">
               今日の学習タスク
             </h2>
@@ -225,20 +225,20 @@ export default async function Dashboard() {
             </Link>
           </div>
 
-          <div className="card">
+          <div className="card overflow-hidden">
             {todayTasks.length > 0 ? (
               <ul className="divide-y divide-gray-200">
                 {todayTasks.map((task) => (
                   <li
                     key={task.id}
-                    className="p-4 hover:bg-gray-50 transition-colors"
+                    className="p-5 hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center gap-4">
                       <div className="flex-shrink-0">
                         {task.isComplete ? (
-                          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
                             <svg
-                              className="w-5 h-5 text-green-600"
+                              className="w-6 h-6 text-green-600"
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 20 20"
                               fill="currentColor"
@@ -251,9 +251,9 @@ export default async function Dashboard() {
                             </svg>
                           </div>
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
                             <svg
-                              className="w-5 h-5 text-gray-400"
+                              className="w-6 h-6 text-gray-400"
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 20 20"
                               fill="currentColor"
@@ -269,7 +269,7 @@ export default async function Dashboard() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <h3
-                          className={`text-sm font-medium ${
+                          className={`text-base font-medium ${
                             task.isComplete
                               ? "line-through text-gray-500"
                               : "text-gray-900"
@@ -282,7 +282,7 @@ export default async function Dashboard() {
                             {task.goalTitle}
                           </span>
                           {task.description && (
-                            <p className="text-xs text-gray-500 truncate">
+                            <p className="text-xs text-gray-600 truncate">
                               {task.description}
                             </p>
                           )}
@@ -293,9 +293,9 @@ export default async function Dashboard() {
                 ))}
               </ul>
             ) : (
-              <div className="py-12 text-center">
+              <div className="py-16 text-center">
                 <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
+                  className="mx-auto h-16 w-16 text-gray-300"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -308,11 +308,11 @@ export default async function Dashboard() {
                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                   />
                 </svg>
-                <p className="mt-4 text-gray-500">
+                <p className="mt-4 text-gray-600 text-lg">
                   今日の学習タスクはありません
                 </p>
                 <div className="mt-6">
-                  <Link href="/goals/new" className="btn btn-primary btn-sm">
+                  <Link href="/goals/new" className="btn btn-primary">
                     学習目標を追加する
                   </Link>
                 </div>
