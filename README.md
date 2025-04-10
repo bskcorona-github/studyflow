@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StudyFlow - AI 学習計画生成アプリ
 
-## Getting Started
+StudyFlow は、AI を活用して学習目標に合わせた最適な学習計画を自動生成するアプリケーションです。
 
-First, run the development server:
+## 主な機能
+
+- ユーザー認証（Google 連携またはメールアドレス）
+- 学習目標の設定（分野、目標、期限、学習頻度）
+- AI による学習計画の自動生成
+- 日次タスク管理と進捗トラッキング
+- 自動リバランス機能（タスク未完了時）
+- 進捗グラフ表示
+
+## 技術スタック
+
+- フロントエンド/バックエンド: Next.js (App Router)
+- データベース: MySQL (Prisma ORM)
+- 認証: NextAuth.js
+- AI 連携: Gemini Pro API
+- UI: Tailwind CSS + DaisyUI
+- グラフ表示: Chart.js
+
+## 環境構築
+
+### 前提条件
+
+- Node.js 18.x 以上
+- MySQL 8.0 以上
+- npm 9.x 以上
+
+### インストール手順
+
+1. リポジトリをクローン
+
+```bash
+git clone https://github.com/yourusername/studyflow.git
+cd studyflow
+```
+
+2. 依存関係のインストール
+
+```bash
+npm install
+```
+
+3. 環境変数の設定
+
+`.env`ファイルを作成し、以下の内容を設定してください：
+
+```
+DATABASE_URL="mysql://username:password@localhost:3306/study_flow"
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=<random_secret>
+GOOGLE_ID=<your_google_client_id>
+GOOGLE_SECRET=<your_google_client_secret>
+GEMINI_API_KEY=<your_gemini_api_key>
+```
+
+4. データベースのセットアップ
+
+```bash
+npx prisma db push
+```
+
+5. 開発サーバーの起動
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+6. ブラウザで `http://localhost:3000` にアクセス
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 利用方法
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. アカウントを作成してログイン
+2. 「新しい目標を追加」から学習目標を設定
+3. AI が学習計画を自動生成
+4. ダッシュボードから今日のタスクを確認
+5. タスク完了時にチェックして進捗を記録
 
-## Learn More
+## ライセンス
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT License
