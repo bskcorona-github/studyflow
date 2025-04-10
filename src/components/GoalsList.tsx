@@ -54,9 +54,9 @@ export default function GoalsList({ goals }: GoalsListProps) {
 
   if (goals.length === 0) {
     return (
-      <div className="card p-12 text-center">
+      <div className="card p-16 text-center">
         <svg
-          className="w-16 h-16 mx-auto text-gray-300"
+          className="w-20 h-20 mx-auto text-gray-300"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -69,14 +69,14 @@ export default function GoalsList({ goals }: GoalsListProps) {
             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
           />
         </svg>
-        <h3 className="mt-4 text-lg text-gray-800 font-medium">
+        <h3 className="mt-6 text-xl text-gray-800 font-medium">
           学習目標がありません
         </h3>
-        <p className="mt-2 text-gray-500">
+        <p className="mt-3 text-gray-600">
           最初の学習目標を設定して、学習計画を始めましょう
         </p>
-        <div className="mt-6">
-          <Link href="/goals/new" className="btn btn-primary">
+        <div className="mt-8">
+          <Link href="/goals/new" className="btn btn-primary btn-lg">
             新しい目標を追加
           </Link>
         </div>
@@ -85,17 +85,17 @@ export default function GoalsList({ goals }: GoalsListProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {goals.map((goal) => (
         <div
           key={goal.id}
           className="card overflow-hidden transition-all hover:shadow-md"
         >
-          <div className="p-5">
+          <div className="p-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-semibold text-gray-900 truncate">
+                  <h3 className="text-xl font-semibold text-gray-900 truncate">
                     <Link
                       href={`/goals/${goal.id}`}
                       className="hover:text-primary-600 transition-colors"
@@ -105,11 +105,11 @@ export default function GoalsList({ goals }: GoalsListProps) {
                   </h3>
                   <span className="badge badge-primary">{goal.field}</span>
                 </div>
-                <div className="mt-1 text-sm text-gray-500">
+                <div className="mt-1 text-sm text-gray-600">
                   期限: {new Date(goal.deadline).toLocaleDateString("ja-JP")}
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Link
                   href={`/goals/${goal.id}`}
                   className="btn btn-outline btn-sm"
@@ -152,16 +152,16 @@ export default function GoalsList({ goals }: GoalsListProps) {
               </div>
             </div>
 
-            <div className="mt-4">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-xs font-medium text-gray-500">進捗</span>
-                <span className="text-xs font-medium text-gray-700">
+            <div className="mt-5">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-medium text-gray-600">進捗</span>
+                <span className="text-sm font-medium text-gray-800">
                   {goal.progress}%
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
-                  className={`h-2 rounded-full ${
+                  className={`h-3 rounded-full ${
                     goal.progress < 30
                       ? "bg-red-500"
                       : goal.progress < 70
@@ -173,10 +173,10 @@ export default function GoalsList({ goals }: GoalsListProps) {
               </div>
             </div>
 
-            <div className="mt-4 flex flex-wrap justify-between text-sm">
-              <div className="flex items-center gap-1 text-gray-700">
+            <div className="mt-5 flex flex-wrap justify-between text-sm">
+              <div className="flex items-center gap-2 text-gray-700">
                 <svg
-                  className="h-4 w-4 text-primary-500"
+                  className="h-5 w-5 text-primary-500"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="currentColor"
@@ -187,7 +187,7 @@ export default function GoalsList({ goals }: GoalsListProps) {
                     clipRule="evenodd"
                   />
                 </svg>
-                <span>
+                <span className="font-medium">
                   {goal.remainingDays <= 0
                     ? "期限切れ"
                     : `残り ${goal.remainingDays} 日`}
@@ -195,9 +195,9 @@ export default function GoalsList({ goals }: GoalsListProps) {
               </div>
 
               {goal.tasksToday > 0 && (
-                <div className="flex items-center gap-1 text-gray-700">
+                <div className="flex items-center gap-2 text-gray-700">
                   <svg
-                    className="h-4 w-4 text-accent"
+                    className="h-5 w-5 text-accent"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -209,7 +209,7 @@ export default function GoalsList({ goals }: GoalsListProps) {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span>
+                  <span className="font-medium">
                     今日のタスク: {goal.completedTasksToday}/{goal.tasksToday}
                   </span>
                 </div>

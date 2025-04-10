@@ -11,17 +11,17 @@ export default {
     extend: {
       colors: {
         primary: {
-          50: "#f0f9ff",
-          100: "#e0f2fe",
-          200: "#bae6fd",
-          300: "#7dd3fc",
-          400: "#38bdf8",
-          500: "#0ea5e9",
-          600: "#0284c7",
-          700: "#0369a1",
-          800: "#075985",
-          900: "#0c4a6e",
-          950: "#082f49",
+          50: "#f0f7ff",
+          100: "#e0eefe",
+          200: "#bae0fd",
+          300: "#78cafc",
+          400: "#36b3f9",
+          500: "#0c98eb",
+          600: "#0284d8",
+          700: "#026bb0",
+          800: "#065a90",
+          900: "#0a4b77",
+          950: "#062d4a",
         },
         gray: {
           50: "#f9fafb",
@@ -37,9 +37,9 @@ export default {
           950: "#030712",
         },
         accent: {
-          DEFAULT: "#10b981",
-          light: "#34d399",
-          dark: "#059669",
+          DEFAULT: "#06b6d4",
+          light: "#22d3ee",
+          dark: "#0891b2",
         },
         warning: "#f59e0b",
         error: "#ef4444",
@@ -49,23 +49,21 @@ export default {
         sans: ["var(--font-inter)", "var(--font-noto-sans-jp)", "sans-serif"],
       },
       borderRadius: {
-        DEFAULT: "0.5rem",
-        sm: "0.375rem",
-        lg: "0.75rem",
-        xl: "1rem",
+        DEFAULT: "0.75rem",
+        sm: "0.5rem",
+        lg: "1rem",
+        xl: "1.5rem",
       },
       boxShadow: {
-        sm: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-        DEFAULT:
-          "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
-        md: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-        lg: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-        xl: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+        sm: "0 1px 2px 0 rgba(0, 0, 0, 0.03)",
+        DEFAULT: "0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04)",
+        md: "0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04)",
+        lg: "0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03)",
+        xl: "0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03)",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
     },
   },
@@ -74,9 +72,9 @@ export default {
     themes: [
       {
         light: {
-          primary: "#0ea5e9",
-          secondary: "#10b981",
-          accent: "#8b5cf6",
+          primary: "#0c98eb",
+          secondary: "#06b6d4",
+          accent: "#0ea5e9",
           neutral: "#1f2937",
           "base-100": "#ffffff",
           "base-200": "#f9fafb",
