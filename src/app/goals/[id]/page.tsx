@@ -7,9 +7,9 @@ import { prisma } from "@/lib/prisma";
 import TaskItem from "@/components/TaskItem";
 
 type PageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export default async function GoalDetail({ params }: PageProps) {
