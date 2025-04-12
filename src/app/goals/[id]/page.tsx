@@ -6,21 +6,27 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import TaskItem from "@/components/TaskItem";
 
-export default async function GoalDetail({
-  params,
-}: {
-  params: { id: string };
-}) {
+type PageProps = {
+  params: {
+    id: string;
+  };
+};
+
+export default async function GoalDetail({ params }: PageProps) {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
     redirect("/api/auth/signin");
   }
 
+  // Next.js 15ではparamsをawaitする必要がある
+  const resolvedParams = await params;
+  const goalId = resolvedParams.id;
+
   // 目標の詳細情報を取得
   const goal = await prisma.goal.findUnique({
     where: {
-      id: params.id,
+      id: goalId,
     },
     include: {
       dailyStudy: {
