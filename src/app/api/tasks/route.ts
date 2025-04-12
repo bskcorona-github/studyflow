@@ -1,256 +1,85 @@
-import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import { getCurrentUser } from "@/lib/session";
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/[...nextauth]/route";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
-
-// タスク完了状態を更新
-export async function PATCH(req: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const user = await getCurrentUser();
+    const session = await getServerSession(authOptions);
 
-    if (!user) {
+    if (!session || !session.user) {
       return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
     }
 
-    const body = await req.json();
-    const { taskId, isComplete, title, description } = body;
+    const { content, date, goalId } = await request.json();
 
-    if (!taskId) {
-      return NextResponse.json(
-        { error: "タスクIDが必要です" },
-        { status: 400 }
-      );
+    // 目標がユーザーのものか確認
+    const goal = await prisma.goal.findUnique({
+      where: {
+        id: goalId,
+      },
+    });
+
+    if (!goal || goal.userId !== session.user.id) {
+      return NextResponse.json({ error: "権限がありません" }, { status: 403 });
     }
 
-    // タスク取得 (ユーザーのタスクかどうか確認)
-    const task = await prisma.studyTask.findFirst({
+    const task = await prisma.dailyTask.create({
+      data: {
+        content,
+        date: new Date(date),
+        goalId,
+      },
+    });
+
+    return NextResponse.json(task);
+  } catch (error) {
+    console.error("Error creating task:", error);
+    return NextResponse.json(
+      { error: "タスクの作成に失敗しました" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+    }
+
+    const { id, isCompleted } = await request.json();
+
+    // タスクがユーザーのものか確認
+    const task = await prisma.dailyTask.findUnique({
       where: {
-        id: taskId,
-        studyGoal: {
-          userId: user.id,
-        },
+        id,
       },
       include: {
-        schedule: true,
+        goal: true,
       },
     });
 
-    if (!task) {
-      return NextResponse.json(
-        { error: "タスクが見つかりません" },
-        { status: 404 }
-      );
+    if (!task || task.goal.userId !== session.user.id) {
+      return NextResponse.json({ error: "権限がありません" }, { status: 403 });
     }
 
-    // 更新するデータの準備
-    const updateData: any = {};
-
-    // 完了状態の更新がある場合
-    if (isComplete !== undefined) {
-      updateData.isComplete = isComplete;
-    }
-
-    // タイトルの更新がある場合
-    if (title !== undefined) {
-      updateData.title = title;
-    }
-
-    // 説明の更新がある場合
-    if (description !== undefined) {
-      updateData.description = description;
-    }
-
-    // タスク更新
-    const updatedTask = await prisma.studyTask.update({
+    const updatedTask = await prisma.dailyTask.update({
       where: {
-        id: taskId,
+        id,
       },
-      data: updateData,
+      data: {
+        isCompleted,
+      },
     });
-
-    // 完了状態が変更された場合のみスケジュールの進捗率を更新
-    if (isComplete !== undefined) {
-      // スケジュールの進捗率を更新
-      const allTasks = await prisma.studyTask.findMany({
-        where: {
-          scheduleId: task.scheduleId,
-        },
-      });
-
-      const completedTasksCount = allTasks.filter((t) => t.isComplete).length;
-      const progress =
-        allTasks.length > 0 ? completedTasksCount / allTasks.length : 0;
-
-      // スケジュールが100%完了した場合、完了フラグを立てる
-      const isScheduleComplete = progress === 1;
-
-      await prisma.studySchedule.update({
-        where: {
-          id: task.scheduleId,
-        },
-        data: {
-          progress,
-          isComplete: isScheduleComplete,
-        },
-      });
-    }
 
     return NextResponse.json(updatedTask);
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error updating task:", error);
     return NextResponse.json(
-      { error: "サーバーエラーが発生しました" },
-      { status: 500 }
-    );
-  }
-}
-
-// タスク一覧取得
-export async function GET(req: NextRequest) {
-  try {
-    const user = await getCurrentUser();
-
-    if (!user) {
-      return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
-    }
-
-    const url = new URL(req.url);
-    const date = url.searchParams.get("date");
-    const goalId = url.searchParams.get("goalId");
-
-    let whereClause: any = {
-      studyGoal: {
-        userId: user.id,
-      },
-    };
-
-    if (date) {
-      const targetDate = new Date(date);
-      targetDate.setHours(0, 0, 0, 0);
-      const nextDay = new Date(targetDate);
-      nextDay.setDate(targetDate.getDate() + 1);
-
-      whereClause.schedule = {
-        date: {
-          gte: targetDate,
-          lt: nextDay,
-        },
-      };
-    }
-
-    if (goalId) {
-      whereClause.goalId = goalId;
-    }
-
-    const tasks = await prisma.studyTask.findMany({
-      where: whereClause,
-      include: {
-        studyGoal: {
-          select: {
-            title: true,
-            field: true,
-          },
-        },
-        schedule: {
-          select: {
-            date: true,
-            isComplete: true,
-            progress: true,
-          },
-        },
-      },
-      orderBy: [
-        {
-          schedule: {
-            date: "asc",
-          },
-        },
-        {
-          createdAt: "asc",
-        },
-      ],
-    });
-
-    return NextResponse.json(tasks);
-  } catch (error) {
-    console.error("Error:", error);
-    return NextResponse.json(
-      { error: "サーバーエラーが発生しました" },
-      { status: 500 }
-    );
-  }
-}
-
-// タスク削除
-export async function DELETE(req: NextRequest) {
-  try {
-    const user = await getCurrentUser();
-
-    if (!user) {
-      return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
-    }
-
-    const url = new URL(req.url);
-    const taskId = url.searchParams.get("taskId");
-
-    if (!taskId) {
-      return NextResponse.json(
-        { error: "タスクIDが必要です" },
-        { status: 400 }
-      );
-    }
-
-    // タスク取得 (ユーザーのタスクかどうか確認)
-    const task = await prisma.studyTask.findFirst({
-      where: {
-        id: taskId,
-        studyGoal: {
-          userId: user.id,
-        },
-      },
-    });
-
-    if (!task) {
-      return NextResponse.json(
-        { error: "タスクが見つかりません" },
-        { status: 404 }
-      );
-    }
-
-    // タスク削除
-    await prisma.studyTask.delete({
-      where: {
-        id: taskId,
-      },
-    });
-
-    // スケジュールの進捗率を更新
-    const allTasks = await prisma.studyTask.findMany({
-      where: {
-        scheduleId: task.scheduleId,
-      },
-    });
-
-    const completedTasksCount = allTasks.filter((t) => t.isComplete).length;
-    const progress =
-      allTasks.length > 0 ? completedTasksCount / allTasks.length : 0;
-
-    await prisma.studySchedule.update({
-      where: {
-        id: task.scheduleId,
-      },
-      data: {
-        progress,
-        isComplete: allTasks.length === 0 || progress === 1,
-      },
-    });
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Error:", error);
-    return NextResponse.json(
-      { error: "サーバーエラーが発生しました" },
+      { error: "タスクの更新に失敗しました" },
       { status: 500 }
     );
   }

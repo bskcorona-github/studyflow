@@ -1,326 +1,190 @@
-import Link from "next/link";
-import { getCurrentUser } from "@/lib/session";
-import { PrismaClient } from "@prisma/client";
 import { redirect } from "next/navigation";
-import GoalsList from "@/components/GoalsList";
-
-const prisma = new PrismaClient();
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../api/auth/[...nextauth]/route";
+import Navbar from "@/components/Navbar";
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 
 export default async function Dashboard() {
-  const user = await getCurrentUser();
+  const session = await getServerSession(authOptions);
 
-  if (!user) {
+  if (!session || !session.user) {
     redirect("/api/auth/signin");
   }
 
-  const goals = await prisma.studyGoal.findMany({
-    where: {
-      userId: user.id,
-    },
-    include: {
-      studySchedules: true,
-    },
-  });
-
-  // 今日の学習タスク
+  // 今日の日付
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const todaySchedules = await prisma.studySchedule.findMany({
+  // ユーザーの目標と今日のタスクを取得
+  const goals = await prisma.goal.findMany({
     where: {
-      goalId: { in: goals.map((goal) => goal.id) },
-      date: {
-        gte: today,
-        lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
-      },
+      userId: session.user.id,
     },
     include: {
-      studyTasks: true,
-      studyGoal: true,
+      dailyStudy: {
+        where: {
+          date: {
+            gte: today,
+            lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
+          },
+        },
+      },
     },
   });
 
-  const todayTasks = todaySchedules.flatMap((schedule) =>
-    schedule.studyTasks.map((task) => ({
-      ...task,
-      goalTitle: schedule.studyGoal.title,
-    }))
-  );
-
-  // 各目標の進捗状況を計算
-  const goalsWithProgress = goals.map((goal) => {
-    // 進捗を計算
-    const totalSchedules = goal.studySchedules.length;
-    const completedSchedules = goal.studySchedules.filter(
-      (s) => s.isComplete
-    ).length;
-    const progress =
-      totalSchedules > 0
-        ? Math.round((completedSchedules / totalSchedules) * 100)
-        : 0;
-
-    // 残り日数を計算
-    const deadline = new Date(goal.deadline);
-    const remainingDays = Math.ceil(
-      (deadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-    );
-
-    // 今日のタスク数
-    const todaySchedule = todaySchedules.find((s) => s.goalId === goal.id);
-
-    const tasksToday = todaySchedule?.studyTasks.length || 0;
-    const completedTasksToday = todaySchedule
-      ? todaySchedule.studyTasks.filter((t) => t.isComplete).length
-      : 0;
-
-    return {
-      id: goal.id,
-      title: goal.title,
-      field: goal.field,
-      deadline: goal.deadline,
-      progress,
-      remainingDays,
-      tasksToday,
-      completedTasksToday,
-    };
+  // 完了したタスクの総数を取得
+  const completedTasksCount = await prisma.dailyTask.count({
+    where: {
+      goal: {
+        userId: session.user.id,
+      },
+      isCompleted: true,
+    },
   });
 
+  // 全タスクの総数を取得
+  const totalTasksCount = await prisma.dailyTask.count({
+    where: {
+      goal: {
+        userId: session.user.id,
+      },
+    },
+  });
+
+  // 進捗率の計算
+  const progressRate =
+    totalTasksCount > 0
+      ? Math.round((completedTasksCount / totalTasksCount) * 100)
+      : 0;
+
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <div className="layout-container py-10">
-        <header className="mb-10">
-          <h1 className="text-3xl font-bold text-gray-900">ダッシュボード</h1>
-          <p className="mt-2 text-gray-600">
-            学習の進捗状況と今日のタスクを確認できます
-          </p>
-        </header>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-          <div className="card p-6 hover:shadow-md transition-all">
-            <div className="flex items-start">
-              <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary-100 flex items-center justify-center">
-                <svg
-                  className="w-7 h-7 text-primary-600"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-              </div>
-              <div className="ml-5">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  学習目標
-                </h2>
-                <p className="text-3xl font-bold text-primary-600 mt-1">
-                  {goals.length}
-                </p>
-                <Link
-                  href="/goals"
-                  className="text-sm text-primary-600 hover:text-primary-700 font-medium mt-2 inline-block"
-                >
-                  すべての目標を見る →
-                </Link>
-              </div>
-            </div>
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="md:flex md:items-center md:justify-between">
+          <div className="flex-1 min-w-0">
+            <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+              ダッシュボード
+            </h2>
           </div>
-
-          <div className="card p-6 hover:shadow-md transition-all">
-            <div className="flex items-start">
-              <div className="flex-shrink-0 w-14 h-14 rounded-full bg-accent-light bg-opacity-20 flex items-center justify-center">
-                <svg
-                  className="w-7 h-7 text-accent"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  />
-                </svg>
-              </div>
-              <div className="ml-5">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  今日のタスク
-                </h2>
-                <p className="text-3xl font-bold text-accent mt-1">
-                  {todayTasks.length}
-                </p>
-                <Link
-                  href="/tasks"
-                  className="text-sm text-accent hover:text-accent-dark font-medium mt-2 inline-block"
-                >
-                  すべてのタスクを見る →
-                </Link>
-              </div>
-            </div>
+          <div className="mt-4 flex md:mt-0 md:ml-4">
+            <Link
+              href="/goals/new"
+              className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              新しい目標を追加
+            </Link>
           </div>
+        </div>
 
-          <div className="card p-6 hover:shadow-md transition-all">
-            <div className="flex items-start">
-              <div className="flex-shrink-0 w-14 h-14 rounded-full bg-success bg-opacity-20 flex items-center justify-center">
-                <svg
-                  className="w-7 h-7 text-success"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
+        <div className="mt-8">
+          <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="px-4 py-5 sm:p-6">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">
+                全体の進捗
+              </h3>
+              <div className="mt-2 max-w-xl text-sm text-gray-500">
+                <p>全ての学習目標の進捗状況です。</p>
               </div>
-              <div className="ml-5">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  完了タスク
-                </h2>
-                <p className="text-3xl font-bold text-success mt-1">
-                  {todayTasks.filter((task) => task.isComplete).length} /{" "}
-                  {todayTasks.length}
-                </p>
-                <p className="text-sm text-gray-600 mt-2">
-                  {Math.round(
-                    (todayTasks.filter((task) => task.isComplete).length /
-                      Math.max(todayTasks.length, 1)) *
-                      100
-                  )}
-                  % 完了
-                </p>
+              <div className="mt-4">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm font-medium text-gray-900">
+                      {completedTasksCount} / {totalTasksCount} タスク完了
+                    </div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {progressRate}%
+                    </div>
+                  </div>
+                  <div className="mt-2 overflow-hidden bg-gray-200 rounded-full h-2.5">
+                    <div
+                      className="bg-blue-600 h-2.5 rounded-full"
+                      style={{ width: `${progressRate}%` }}
+                    ></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <section className="mb-10">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">学習目標</h2>
-            <Link href="/goals/new" className="btn btn-primary btn-sm">
-              新しい目標を追加
-            </Link>
-          </div>
-          <GoalsList goals={goalsWithProgress} />
-        </section>
-
-        <section>
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">
-              今日の学習タスク
-            </h2>
-            <Link href="/tasks" className="btn btn-outline btn-sm">
-              すべてのタスクを見る
-            </Link>
-          </div>
-
-          <div className="card overflow-hidden">
-            {todayTasks.length > 0 ? (
-              <ul className="divide-y divide-gray-200">
-                {todayTasks.map((task) => (
-                  <li
-                    key={task.id}
-                    className="p-5 hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="flex-shrink-0">
-                        {task.isComplete ? (
-                          <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                            <svg
-                              className="w-6 h-6 text-green-600"
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </div>
-                        ) : (
-                          <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                            <svg
-                              className="w-6 h-6 text-gray-400"
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-2a6 6 0 100-12 6 6 0 000 12z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </div>
-                        )}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h3
-                          className={`text-base font-medium ${
-                            task.isComplete
-                              ? "line-through text-gray-500"
-                              : "text-gray-900"
-                          }`}
+        <div className="mt-8">
+          <h3 className="text-lg leading-6 font-medium text-gray-900">
+            今日のタスク
+          </h3>
+          {goals.length === 0 ? (
+            <div className="mt-4 bg-white overflow-hidden shadow rounded-lg px-4 py-5 sm:p-6">
+              <p className="text-center text-gray-500">
+                まだ学習目標が設定されていません。
+                <Link
+                  href="/goals/new"
+                  className="text-blue-600 hover:underline ml-1"
+                >
+                  目標を追加しましょう
+                </Link>
+              </p>
+            </div>
+          ) : (
+            <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {goals.map((goal) => (
+                <div
+                  key={goal.id}
+                  className="bg-white overflow-hidden shadow rounded-lg"
+                >
+                  <div className="px-4 py-5 sm:p-6">
+                    <h4 className="text-lg font-medium text-gray-900">
+                      {goal.title}
+                    </h4>
+                    <p className="mt-1 text-sm text-gray-500">
+                      目標期限:{" "}
+                      {new Date(goal.targetDate).toLocaleDateString("ja-JP")}
+                    </p>
+                    <div className="mt-4">
+                      <h5 className="text-sm font-medium text-gray-900">
+                        今日のタスク
+                      </h5>
+                      {goal.dailyStudy.length === 0 ? (
+                        <p className="mt-2 text-sm text-gray-500">
+                          今日のタスクはありません
+                        </p>
+                      ) : (
+                        <ul className="mt-2 divide-y divide-gray-200">
+                          {goal.dailyStudy.map((task) => (
+                            <li key={task.id} className="py-3">
+                              <div className="flex items-start">
+                                <span className="h-5 flex items-center">
+                                  <input
+                                    type="checkbox"
+                                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
+                                    defaultChecked={task.isCompleted}
+                                    disabled
+                                  />
+                                </span>
+                                <span className="ml-3 text-sm text-black font-medium">
+                                  {task.content}
+                                </span>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      <div className="mt-4">
+                        <Link
+                          href={`/goals/${goal.id}`}
+                          className="text-sm font-medium text-blue-600 hover:text-blue-500"
                         >
-                          {task.title}
-                        </h3>
-                        <div className="mt-1 flex items-center gap-2">
-                          <span className="badge badge-primary">
-                            {task.goalTitle}
-                          </span>
-                          {task.description && (
-                            <p className="text-xs text-gray-600 truncate">
-                              {task.description}
-                            </p>
-                          )}
-                        </div>
+                          詳細を見る →
+                        </Link>
                       </div>
                     </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className="py-16 text-center">
-                <svg
-                  className="mx-auto h-16 w-16 text-gray-300"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1}
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  />
-                </svg>
-                <p className="mt-4 text-gray-600 text-lg">
-                  今日の学習タスクはありません
-                </p>
-                <div className="mt-6">
-                  <Link href="/goals/new" className="btn btn-primary">
-                    学習目標を追加する
-                  </Link>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        </section>
-      </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 }
