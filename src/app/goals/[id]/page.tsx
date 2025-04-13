@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import TaskItem from "@/components/TaskItem";
+import DeleteGoalButton from "@/components/DeleteGoalButton";
 
 type PageProps = {
   params: Promise<{
@@ -105,6 +106,9 @@ export default async function GoalDetail({ params }: PageProps) {
             >
               ← 目標一覧に戻る
             </Link>
+            <div className="ml-3">
+              <DeleteGoalButton goalId={goalId} />
+            </div>
           </div>
         </div>
 

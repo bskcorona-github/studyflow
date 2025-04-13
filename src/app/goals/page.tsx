@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import DeleteGoalButton from "@/components/DeleteGoalButton";
 
 export default async function GoalsList() {
   const session = await getServerSession(authOptions);
@@ -98,7 +99,7 @@ export default async function GoalsList() {
                             <p className="text-sm font-medium text-blue-600 truncate">
                               {goal.title}
                             </p>
-                            <div className="ml-2 flex-shrink-0 flex">
+                            <div className="ml-2 flex-shrink-0 flex items-center gap-2">
                               <p
                                 className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                                   diffDays < 0
@@ -153,6 +154,9 @@ export default async function GoalsList() {
                           </div>
                         </div>
                       </Link>
+                      <div className="px-4 py-2 border-t border-gray-100 flex justify-end">
+                        <DeleteGoalButton goalId={goal.id} />
+                      </div>
                     </li>
                   );
                 })}
