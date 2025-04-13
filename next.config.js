@@ -103,19 +103,17 @@ const nextConfig = {
   },
   output: "standalone", // スタンドアローンビルドモードを有効化
   // 権限エラーを回避するための設定
-  experimental: {
-    outputFileTracingExcludes: {
-      "*": [
-        "node_modules/@swc/core-win32-x64-msvc",
-        "node_modules/next/dist/compiled/@ampproject/toolbox-optimizer",
-        "node_modules/next/dist/server/lib/squoosh/**",
-        "**/node_modules/sharp/**",
-        "**/.git/**",
-        "**/Application Data/**",
-        "**/AppData/**",
-        "**/Local Settings/**",
-      ],
-    },
+  outputFileTracingExcludes: {
+    "*": [
+      "node_modules/@swc/core-win32-x64-msvc",
+      "node_modules/next/dist/compiled/@ampproject/toolbox-optimizer",
+      "node_modules/next/dist/server/lib/squoosh/**",
+      "**/node_modules/sharp/**",
+      "**/.git/**",
+      "**/Application Data/**",
+      "**/AppData/**",
+      "**/Local Settings/**",
+    ],
   },
   // ビルド中に無視するパターンを指定
   onDemandEntries: {
