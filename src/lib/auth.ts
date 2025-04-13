@@ -20,9 +20,6 @@ export const authOptions: NextAuthOptions = {
     // セッション有効期間を1日に設定
     maxAge: 24 * 60 * 60, // 1日
   },
-  pages: {
-    signIn: "/auth/signin",
-  },
   callbacks: {
     async session({ session, token }) {
       if (session.user) {
