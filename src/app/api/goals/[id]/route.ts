@@ -3,10 +3,13 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+type Context = {
+  params: {
+    id: string;
+  };
+};
+
+export async function DELETE(request: Request, context: Context) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -14,7 +17,7 @@ export async function DELETE(
       return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
     }
 
-    const goalId = params.id;
+    const goalId = context.params.id;
 
     // 目標が存在するか確認
     const goal = await prisma.goal.findUnique({
