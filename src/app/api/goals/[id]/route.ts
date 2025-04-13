@@ -8,7 +8,6 @@ type Params = {
 };
 
 // 単一の目標を取得するエンドポイント
-// @ts-expect-error - Next.js App Router型エラー回避のため
 export async function GET(request: Request, context: { params: Params }) {
   try {
     const session = await getServerSession(authOptions);
@@ -58,7 +57,6 @@ export async function GET(request: Request, context: { params: Params }) {
 }
 
 // 目標を削除するエンドポイント
-// @ts-expect-error - Next.js App Router型エラー回避のため
 export async function DELETE(request: Request, context: { params: Params }) {
   try {
     const session = await getServerSession(authOptions);
