@@ -3,6 +3,56 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+// 単一の目標を取得するエンドポイント
+export async function GET(request, { params }) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+    }
+
+    const goalId = params.id;
+
+    const goal = await prisma.goal.findUnique({
+      where: {
+        id: goalId,
+      },
+      include: {
+        dailyStudy: {
+          orderBy: {
+            date: "asc",
+          },
+        },
+      },
+    });
+
+    if (!goal) {
+      return NextResponse.json(
+        { error: "目標が見つかりません" },
+        { status: 404 }
+      );
+    }
+
+    // 目標の所有者確認
+    if (goal.userId !== session.user.id) {
+      return NextResponse.json(
+        { error: "この操作を実行する権限がありません" },
+        { status: 403 }
+      );
+    }
+
+    return NextResponse.json(goal);
+  } catch (error) {
+    console.error("Error fetching goal:", error);
+    return NextResponse.json(
+      { error: "目標の取得に失敗しました" },
+      { status: 500 }
+    );
+  }
+}
+
+// 目標を削除するエンドポイント
 export async function DELETE(request, { params }) {
   try {
     const session = await getServerSession(authOptions);
