@@ -1,40 +1,5 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "@/lib/prisma";
-import { AuthOptions } from "next-auth";
 import NextAuth from "next-auth/next";
-import GoogleProvider from "next-auth/providers/google";
-
-export const authOptions: AuthOptions = {
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_ID || "",
-      clientSecret: process.env.GOOGLE_SECRET || "",
-    }),
-  ],
-  session: {
-    strategy: "jwt",
-    maxAge: 24 * 60 * 60, // 1日のセッション期間
-  },
-  jwt: {
-    maxAge: 60 * 60 * 24 * 30, // 30日のJWT有効期間
-  },
-  pages: {
-    signIn: "/auth/signin",
-  },
-  callbacks: {
-    async session({ session, token }) {
-      console.log("NextAuth session callback - token:", token);
-      if (session.user) {
-        session.user.id = token.sub as string;
-        console.log("Set session user ID to:", session.user.id);
-      }
-      return session;
-    },
-  },
-  // 明示的にシークレットを設定
-  secret: process.env.NEXTAUTH_SECRET,
-};
+import { authOptions } from "@/lib/auth";
 
 const handler = NextAuth(authOptions);
 
