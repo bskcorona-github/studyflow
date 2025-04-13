@@ -5,7 +5,13 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Gemini APIの初期化
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({
+  model: "gemini-1.5-flash",
+  generationConfig: {
+    temperature: 0.2, // 低い温度値で決定的な出力に
+    maxOutputTokens: 1024, // 出力を制限
+  },
+});
 
 export async function POST(request: Request) {
   try {
@@ -18,23 +24,18 @@ export async function POST(request: Request) {
     const { subject, description, targetDate } = await request.json();
 
     const prompt = `
-      あなたは学習計画を作成する専門家です。
-      以下の情報を基に、学習者のための日毎の学習計画を作成してください。
-
       科目: ${subject}
       目標: ${description}
       目標達成日: ${new Date(targetDate).toISOString().split("T")[0]}
       現在の日付: ${new Date().toISOString().split("T")[0]}
 
-      現在から目標達成日までの日数分の学習タスクを作成してください。
-      各日のタスクは具体的で、1日あたり30分〜1時間程度で完了できる量にしてください。
+      現在から目標達成日までの学習タスクのリストを作成してください。
+      各タスクは具体的で、1日30分程度で完了可能なものにしてください。
       
-      返答形式に関する重要な指示:
-      1. タスクリストだけを返してください。説明や注釈は一切不要です。
-      2. 以下の形式の配列だけを返してください:
-      ["タスク1の内容", "タスク2の内容", ...]
-      3. マークダウン記法は使用せず、純粋なJSONデータとして返してください。
-      4. 各タスクはクォーテーションで囲まれた文字列であり、カンマで区切られます。
+      以下の形式の配列のみ返してください:
+      ["タスク1", "タスク2", ...]
+      
+      説明文や追加テキストは一切不要です。純粋なJSON配列のみ返してください。
     `;
 
     const result = await model.generateContent(prompt);
