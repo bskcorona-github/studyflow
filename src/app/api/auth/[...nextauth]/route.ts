@@ -14,6 +14,10 @@ export const authOptions: AuthOptions = {
   ],
   session: {
     strategy: "jwt",
+    maxAge: 24 * 60 * 60, // 1日のセッション期間
+  },
+  jwt: {
+    maxAge: 60 * 60 * 24 * 30, // 30日のJWT有効期間
   },
   pages: {
     signIn: "/auth/signin",
@@ -28,6 +32,8 @@ export const authOptions: AuthOptions = {
       return session;
     },
   },
+  // 明示的にシークレットを設定
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);
